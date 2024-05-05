@@ -1,37 +1,40 @@
 package ru.hogwarts.school.service;
 
 import org.springframework.stereotype.Service;
+import ru.hogwarts.school.exceptions.RecordNotFoundException;
 import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.repository.FacultyRepository;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+
 @Service
 public class FacultyService {
-    private final Map<Long, Faculty> faculties = new HashMap<>();
-    private static long nextId = 1;
+    private final FacultyRepository repository;
+
+    public FacultyService(FacultyRepository repository) {
+        this.repository = repository;
+    }
 
     public Faculty add(Faculty faculty) {
-        faculty.setId(nextId++);
-        faculties.put(faculty.getId(), faculty);
-        return faculty;
+        return repository.save(faculty);
     }
 
     public Faculty get(long id) {
-        return faculties.get(id);
+        return repository.findById(id).orElseThrow(RecordNotFoundException::new);
     }
 
     public boolean delete(long id) {
-        return faculties.remove(id) != null;
+        return repository.findById(id).map(entity->{
+            repository.delete(entity);
+            return true;
+        }).orElse(false);
     }
     public Faculty update(Faculty faculty){
-        if(faculties.containsKey(faculty.getId())){
-            faculties.put(faculty.getId(), faculty);
-            return faculty;
-        }
-        return null;
+        return repository.findById(faculty.getId())
+                .map(entity->repository.save(faculty))
+                .orElse(null);
     }
     public Collection<Faculty> getByColor(String color){
-        return faculties.values().stream().filter(s->s.getColor().equals(color)).toList();
+        return repository.findAllByColor(color);
     }
 }
