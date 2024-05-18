@@ -24,17 +24,23 @@ public class FacultyService {
     }
 
     public boolean delete(long id) {
-        return repository.findById(id).map(entity->{
+        return repository.findById(id).map(entity -> {
             repository.delete(entity);
             return true;
         }).orElse(false);
     }
-    public Faculty update(Faculty faculty){
+
+    public Faculty update(Faculty faculty) {
         return repository.findById(faculty.getId())
-                .map(entity->repository.save(faculty))
+                .map(entity -> repository.save(faculty))
                 .orElse(null);
     }
-    public Collection<Faculty> getByColor(String color){
-        return repository.findAllByColor(color);
+
+    public Collection<Faculty> getByColorOrName(String color, String name) {
+        return repository.findAllByColorOrNameIgnoreCase(color, name);
     }
+    public Collection<Faculty> getAll() {
+        return repository.findAll();
+    }
+
 }
