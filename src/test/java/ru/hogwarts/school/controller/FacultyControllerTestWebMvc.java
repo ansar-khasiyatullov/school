@@ -106,7 +106,7 @@ class FacultyControllerTestWebMvc {
     }
 
     @Test
-    void testByColorAndName() throws Exception {
+    void testByColorOrName() throws Exception {
         when(facultyRepository.findAllByColorOrNameIgnoreCase(anyString(), anyString())).
                 thenReturn(List.of(
                         new Faculty(1L, "name1", "color1"),
@@ -137,18 +137,3 @@ class FacultyControllerTestWebMvc {
                 .andExpect(status().is(400));
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
