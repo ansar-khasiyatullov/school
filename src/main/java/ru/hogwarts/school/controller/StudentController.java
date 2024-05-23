@@ -61,23 +61,23 @@ public class StudentController {
         return studentService.getAllStudents();
     }
 
-    @GetMapping("student/faculty")
+    @GetMapping("student/faculty")//
     public Faculty getStudentFaculty(@RequestParam long studentId) {
         return studentService.findStudent(studentId).getFaculty();
     }
 
-    @GetMapping("/count")
-    public int getStudentCount() {
-        return studentService.getStudentCount();
-    }
+    @GetMapping("/count")//
+    public int getStudentCount() {//
+        return studentService.getStudentCount();//
+    }//
 
-    @GetMapping("/avg-age")
-    public double getAvgAge() {
-        return studentService.getAvgAge();
-    }
+    @GetMapping("/avg-age")//
+    public double getAvgAge() {//
+        return studentService.getAvgAge();//
+    }//
 
-    @GetMapping("/last")
-    public Collection<Student> getLastStudents() {
-        return studentService.getLastFive();
-    }
+    @GetMapping("/last")//
+    public Collection<Student> getLastStudents() {//
+        return studentService.getLastFive();//
+    }//
 }
