@@ -1,5 +1,7 @@
 package ru.hogwarts.school.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -12,11 +14,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.Collection;
 import java.util.List;
 
 @Service
 public class AvatarService {
+    private final static Logger LOGGER = LoggerFactory.getLogger(AvatarService.class);
     private final AvatarRepository avatarRepository;
     private final StudentRepository studentRepository;
     private final Path avatarsDir;
@@ -28,6 +30,7 @@ public class AvatarService {
     }
 
     public Avatar save(Long studentId, MultipartFile file) throws IOException {
+        LOGGER.info("Avatar.save was invoked!");
 
         Files.createDirectories(avatarsDir);
 
@@ -48,10 +51,12 @@ public class AvatarService {
     }
 
     public Avatar getById(Long id) {
+        LOGGER.info("Avatar.getById was invoked!");
         return avatarRepository.findById(id).orElse(null);
     }
 
     public List<Avatar> getPage(int pageNumber, int pageSize) {
+        LOGGER.info("Avatar.getPage was invoked!");
         return avatarRepository.findAll(PageRequest.of(pageNumber, pageSize)).toList();
     }
 }
