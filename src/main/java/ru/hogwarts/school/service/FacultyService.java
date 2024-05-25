@@ -1,13 +1,18 @@
 package ru.hogwarts.school.service;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.exceptions.RecordNotFoundException;
 import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.FacultyRepository;
 
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.Set;
+import java.util.function.Function;
 
 @Service
 public class FacultyService {
@@ -51,5 +56,14 @@ public class FacultyService {
     public Collection<Faculty> getAll() {
         LOGGER.info("Faculty.getAll was invoked!");
         return repository.findAll();
+    }
+
+
+
+    public String getLongestName(){
+        return repository.findAll().stream()
+                .map(Faculty::getName)
+                .max(Comparator.comparing(String::length))
+                .orElse("");
     }
 }
