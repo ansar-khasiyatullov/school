@@ -74,8 +74,8 @@ class StudentControllerTestRestTemplate {
         var s3 = template.postForEntity("/student", new Student(null, "test_name3", 11), Student.class).getBody();
         var s4 = template.postForEntity("/student", new Student(null, "test_name4", 14), Student.class).getBody();
 
-        var students = template.getForObject("/student/byAnyAgeAndName?name=test_name1&age=12", Student[].class);
+        var students = template.getForObject("/student/byAgeBetween?minAge=10&maxAge=12", Student[].class);
         assertThat(students.length).isEqualTo(2);
-        assertThat(students).containsExactlyInAnyOrder(s1, s2);
+        assertThat(students).containsExactlyInAnyOrder(s2, s3);
     }
 }

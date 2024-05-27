@@ -10,58 +10,54 @@ import java.util.Collection;
 
 @Service
 public class StudentService {
-    private final StudentRepository studentRepository;
+    private final StudentRepository repository;
 
-    public StudentService(StudentRepository studentRepository) {
-        this.studentRepository = studentRepository;
+    public StudentService(StudentRepository repository) {
+        this.repository = repository;
     }
 
-    public Student createStudent(Student student) {
-        return studentRepository.save(student);
+    public Student add(Student student) {
+        return repository.save(student);
     }
 
-    public Student findStudent(long id) {
-        return studentRepository.findById(id).orElseThrow(RecordNotFoundException::new);
+    public Student get(long id) {
+        return repository.findById(id).orElseThrow(RecordNotFoundException::new);
     }
 
-    public boolean deleteStudent(long id) {
-        return studentRepository.findById(id).map(entity -> {
-            studentRepository.delete(entity);
+    public boolean delete(long id) {
+        return repository.findById(id).map(entity -> {
+            repository.delete(entity);
             return true;
         }).orElse(false);
     }
 
-    public Student editStudent(Student student) {
-        return studentRepository.findById(student.getId())
-                .map(entity -> studentRepository.save(student))
+    public Student update(Student student) {
+        return repository.findById(student.getId())
+                .map(entity -> repository.save(student))
                 .orElse(null);
     }
 
-    public Collection<Student> getByAgeStudents(int age){
-        return studentRepository.findByAge(age);
+    public Collection<Student> getByAge(int age){
+        return repository.findByAge(age);
     }
 
     public Collection<Student> getByAgeBetween(int min, int max) {
-        return studentRepository.findAllByAgeBetween(min, max);
+        return repository.findAllByAgeBetween(min, max);
     }
 
-    public Collection<Student> getAllStudents() {
-        return studentRepository.findAll();
-    }
-
-    public Faculty getFacultyByStudent(Long id){
-        return findStudent(id).getFaculty();
+    public Collection<Student> getAll() {
+        return repository.findAll();
     }
 
     public int getStudentCount(){
-        return studentRepository.countStudents();
+        return repository.countStudents();
     }
 
     public double getAvgAge(){
-        return studentRepository.avgAge();
+        return repository.avgAge();
     }
 
     public Collection<Student> getLastFive(){
-        return studentRepository.getLastFive();
+        return repository.getLastFive();
     }
 }
