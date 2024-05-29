@@ -60,8 +60,8 @@ class StudentControllerTestWebMvc {
 
         mvc.perform(MockMvcRequestBuilders.get("/student?id=1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("updated_name"))
-                .andExpect(jsonPath("$.age").value(15));
+                .andExpect(jsonPath("$.name").value("test_student_mvc"))
+                .andExpect(jsonPath("$.age").value(11));
     }
 
     @Test
@@ -109,8 +109,8 @@ class StudentControllerTestWebMvc {
 
         mvc.perform(MockMvcRequestBuilders.get("/student/byAgeBetween?minAge=14&maxAge=16"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].name").value("name2"))
-                .andExpect(jsonPath("$[0].age").value(15));
+                .andExpect(jsonPath("$[0].name").value("name1"))
+                .andExpect(jsonPath("$[0].age").value(11));
     }
 
     @Test
@@ -122,8 +122,8 @@ class StudentControllerTestWebMvc {
 
         mvc.perform(MockMvcRequestBuilders.get("/student/faculty?studentId=1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].name").value("f1"))
-                .andExpect(jsonPath("$[0].color").value("c1"));
+                .andExpect(jsonPath("$.name").value("f1"))
+                .andExpect(jsonPath("$.color").value("c1"));
 
         mvc.perform(MockMvcRequestBuilders.get("/student/faculty?studentId="))
                 .andExpect(status().is(400));

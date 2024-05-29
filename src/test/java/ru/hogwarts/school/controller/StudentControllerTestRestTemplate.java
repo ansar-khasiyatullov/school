@@ -25,14 +25,13 @@ class StudentControllerTestRestTemplate {
         ResponseEntity<Student> postResponse = template.postForEntity("/student", student, Student.class);
         Student addedStudent = postResponse.getBody();
 
-        var result = template.getForObject("http://localhost:" + port + "/student?id=", Student.class);
+        var result = template.getForObject("http://localhost:" + port + "/student?id=" + addedStudent.getId(), Student.class);
         assertThat(result.getAge()).isEqualTo(12);
         assertThat(result.getName()).isEqualTo("test_student");
 
         ResponseEntity<Student> resultAfterDelete = template.exchange("/student?id=-1",
                 HttpMethod.GET, null, Student.class);
         assertThat(resultAfterDelete.getStatusCode().value()).isEqualTo(404);
-
     }
 
     @Test

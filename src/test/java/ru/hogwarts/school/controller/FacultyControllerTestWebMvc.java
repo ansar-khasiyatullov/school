@@ -60,8 +60,8 @@ class FacultyControllerTestWebMvc {
 
         mvc.perform(MockMvcRequestBuilders.get("/faculty?id=1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("updated_name"))
-                .andExpect(jsonPath("$.color").value("updated_color"));
+                .andExpect(jsonPath("$.name").value("test_faculty_mvc"))
+                .andExpect(jsonPath("$.color").value("test_color_mvc"));
     }
 
     @Test

@@ -1,9 +1,7 @@
 package ru.hogwarts.school.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import nonapi.io.github.classgraph.json.Id;
 
 import java.util.Objects;
 
