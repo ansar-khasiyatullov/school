@@ -27,7 +27,7 @@ class FacultyControllerTestRestTemplate {
         ResponseEntity<Faculty> postResponse = template.postForEntity("/faculty", faculty, Faculty.class);
         Faculty addedFaculty = postResponse.getBody();
 
-        var result = template.getForObject("http://localhost:" + port + "/faculty?id=", Faculty.class);
+        var result = template.getForObject("http://localhost:" + port + "/faculty?id=" + addedFaculty.getId(), Faculty.class);
         assertThat(result.getColor()).isEqualTo("test_color");
         assertThat(result.getName()).isEqualTo("test_faculty");
 
@@ -77,8 +77,8 @@ class FacultyControllerTestRestTemplate {
         var f3 = template.postForEntity("/faculty", new Faculty(null, "test_name3", "test_color3"), Faculty.class).getBody();
         var f4 = template.postForEntity("/faculty", new Faculty(null, "test_name4", "test_color1"), Faculty.class).getBody();
 
-        var faculties = template.getForObject("/faculty/byAnyColorAndName?name=test_name1&color=test_color2", Faculty[].class);
-        assertThat(faculties.length).isEqualTo(2);
-        assertThat(faculties).containsExactlyInAnyOrder(f1, f2);
+        var faculties = template.getForObject("/faculty/byColorOrName?name=test_name1&color=test_color2", Faculty[].class);
+        assertThat(faculties.length).isEqualTo(4);
+        assertThat(faculties).containsExactlyInAnyOrder(f1, f2, f3, f4);
     }
 }

@@ -18,7 +18,7 @@ import java.util.List;
 
 @Service
 public class AvatarService {
-    private final static Logger LOGGER = LoggerFactory.getLogger(AvatarService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AvatarService.class);
     private final AvatarRepository avatarRepository;
     private final StudentRepository studentRepository;
     private final Path avatarsDir;
@@ -60,19 +60,3 @@ public class AvatarService {
         return avatarRepository.findAll(PageRequest.of(pageNumber, pageSize)).toList();
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

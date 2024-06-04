@@ -37,7 +37,7 @@ public class FacultyController {
         return facultyService.delete(id);
     }
 
-    @GetMapping("/byColorAndName")
+    @GetMapping("/byColorOrName")
     public Collection<Faculty> getByColorOrName(@RequestParam(required = false) String color,
                                                 @RequestParam(required = false) String name) {
         if (color == null && name == null) {
@@ -46,8 +46,8 @@ public class FacultyController {
         return facultyService.getByColorOrName(color, name);
     }
 
-    @GetMapping("faculty/students")
-    public List<Student> getStudentFaculty(@RequestParam long facultyId) {
+    @GetMapping("/students")
+    public List<Student> getFacultyStudents(@RequestParam long facultyId) {
         return facultyService.get(facultyId).getStudents();
     }
 
