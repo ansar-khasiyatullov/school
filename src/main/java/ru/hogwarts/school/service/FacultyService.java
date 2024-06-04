@@ -16,7 +16,7 @@ import java.util.function.Function;
 
 @Service
 public class FacultyService {
-    private final static Logger LOGGER = LoggerFactory.getLogger(FacultyService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FacultyService.class);
     private final FacultyRepository repository;
 
     public FacultyService(FacultyRepository repository) {
@@ -58,9 +58,8 @@ public class FacultyService {
         return repository.findAll();
     }
 
-
-
     public String getLongestName(){
+        LOGGER.info("Faculty.getLongestName was invoked!");
         return repository.findAll().stream()
                 .map(Faculty::getName)
                 .max(Comparator.comparing(String::length))

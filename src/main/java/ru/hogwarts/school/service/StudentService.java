@@ -4,85 +4,79 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.exceptions.RecordNotFoundException;
-import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 
 import java.util.Collection;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
 public class StudentService {
-    private final static Logger LOGGER = LoggerFactory.getLogger(StudentService.class);
-    private final StudentRepository studentRepository;
+    private static final Logger LOGGER = LoggerFactory.getLogger(StudentService.class);
+    private final StudentRepository repository;
 
-    public StudentService(StudentRepository studentRepository) {
-        this.studentRepository = studentRepository;
+    public StudentService(StudentRepository repository) {
+        this.repository = repository;
     }
 
-    public Student createStudent(Student student) {
-        LOGGER.info("Student.create was invoked!");
-        return studentRepository.save(student);
+    public Student add(Student student) {
+        LOGGER.info("Student.add was invoked!");
+        return repository.save(student);
     }
 
-    public Student findStudent(long id) {
-        LOGGER.info("Student.find was invoked!");
-        return studentRepository.findById(id).orElseThrow(RecordNotFoundException::new);
+    public Student get(long id) {
+        LOGGER.info("Student.get was invoked!");
+        return repository.findById(id).orElseThrow(RecordNotFoundException::new);
     }
 
-    public boolean deleteStudent(long id) {
+    public boolean delete(long id) {
         LOGGER.info("Student.delete was invoked!");
-        return studentRepository.findById(id).map(entity -> {
-            studentRepository.delete(entity);
+        return repository.findById(id).map(entity -> {
+            repository.delete(entity);
             return true;
         }).orElse(false);
     }
 
-    public Student editStudent(Student student) {
-        LOGGER.info("Student.edit was invoked!");
-        return studentRepository.findById(student.getId())
-                .map(entity -> studentRepository.save(student))
+    public Student update(Student student) {
+        LOGGER.info("Student.update was invoked!");
+        return repository.findById(student.getId())
+                .map(entity -> repository.save(student))
                 .orElse(null);
     }
 
-    public Collection<Student> getByAgeStudents(int age) {
-        LOGGER.info("Student.getByAgeStudents was invoked!");
-        return studentRepository.findByAge(age);
+    public Collection<Student> getByAge(int age) {
+        LOGGER.info("Student.getByAge was invoked!");
+        return repository.findByAge(age);
     }
 
     public Collection<Student> getByAgeBetween(int min, int max) {
         LOGGER.info("Student.getByAgeBetween was invoked!");
-        return studentRepository.findAllByAgeBetween(min, max);
+        return repository.findAllByAgeBetween(min, max);
     }
 
     public Collection<Student> getAllStudents() {
         LOGGER.info("Student.getAllStudents was invoked!");
-        return studentRepository.findAll();
-    }
-
-    public Faculty getFacultyByStudent(Long id) {
-        LOGGER.info("Student.getFacultyByStudent was invoked!");
-        return findStudent(id).getFaculty();
+        return repository.findAll();
     }
 
     public int getStudentCount() {
         LOGGER.info("Student.getStudentCount was invoked!");
-        return studentRepository.countStudents();
+        return repository.countStudents();
     }
 
     public double getAvgAge() {
         LOGGER.info("Student.getAvgAge was invoked!");
-        return studentRepository.avgAge();
+        return repository.avgAge();
     }
 
     public Collection<Student> getLastFive() {
         LOGGER.info("Student.getLastFive was invoked!");
-        return studentRepository.getLastFive();
+        return repository.getLastFive();
     }
 
     public Collection<String> getNameStartsWithA() {
-        return studentRepository.findAll().stream()
+        LOGGER.info("Student.getNameStartsWithA was invoked!");
+        return repository.findAll().stream()
                 .map(Student::getName)
                 .map(String::toUpperCase)
                 .filter(name -> name.startsWith("A"))
@@ -91,14 +85,15 @@ public class StudentService {
     }
 
     public double getAverageAge() {
-        return studentRepository.findAll().stream()
+        LOGGER.info("Student.getAverageAge was invoked!");
+        return repository.findAll().stream()
                 .mapToDouble(Student::getAge)
                 .average()
                 .orElse(0);
     }
 
     public void printParallel() {
-        var students = studentRepository.findAll();
+        var students = repository.findAll();
 
         LOGGER.info(students.get(0).toString());
         LOGGER.info(students.get(1).toString());
@@ -120,7 +115,7 @@ public class StudentService {
     }
 
     public void printSynchronized(){
-        var students = studentRepository.findAll();
+        var students = repository.findAll();
 
         print(students.get(0));
         print(students.get(1));

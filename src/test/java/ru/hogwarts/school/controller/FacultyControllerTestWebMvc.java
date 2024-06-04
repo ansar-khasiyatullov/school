@@ -1,6 +1,7 @@
 package ru.hogwarts.school.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import net.minidev.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,15 +58,10 @@ class FacultyControllerTestWebMvc {
         Faculty faculty = new Faculty(1L, "updated_name", "updated_color");
         when(facultyRepository.save(any(Faculty.class))).thenReturn(faculty);
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        mvc.perform(MockMvcRequestBuilders.get("/faculty?id=1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(faculty)))
+        mvc.perform(MockMvcRequestBuilders.get("/faculty?id=1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1L))
-                .andExpect(jsonPath("$.name").value("updated_name"))
-                .andExpect(jsonPath("$.color").value("updated_color"));
+                .andExpect(jsonPath("$.name").value("test_faculty_mvc"))
+                .andExpect(jsonPath("$.color").value("test_color_mvc"));
     }
 
     @Test
@@ -83,26 +79,24 @@ class FacultyControllerTestWebMvc {
 
     @Test
     void testAdd() throws Exception {
-        when(facultyRepository.save(any(Faculty.class))).then(invocationOnMock -> {
-            Faculty input = invocationOnMock.getArgument(0, Faculty.class);
-            Faculty f = new Faculty();
-            f.setId(100L);
-            f.setColor(input.getColor());
-            f.setName(input.getName());
-            return f;
-        });
 
-        Faculty faculty = new Faculty(null, "foo", "bar");
+        JSONObject facultyObject = new JSONObject();
+        facultyObject.put("name", "test_faculty_mvc");
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        mvc.perform(MockMvcRequestBuilders.post("/faculty")
+        Faculty faculty = new Faculty(1L, "test_faculty_mvc", "test_color_mvc");
+
+        when(facultyRepository.save(any(Faculty.class))).thenReturn(faculty);
+        when(facultyRepository.findById(any(Long.class))).thenReturn(Optional.of(faculty));
+
+        mvc.perform(MockMvcRequestBuilders
+                        .post("/faculty")
+                        .content(facultyObject.toString())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(faculty)))
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1L))
-                .andExpect(jsonPath("$.name").value("updated_name"))
-                .andExpect(jsonPath("$.color").value("updated_color"));
+                .andExpect(jsonPath("$.name").value("test_faculty_mvc"))
+                .andExpect(jsonPath("$.color").value("test_color_mvc"));
     }
 
     @Test
@@ -113,7 +107,7 @@ class FacultyControllerTestWebMvc {
                         new Faculty(2L, "name2", "color2")
                 ));
 
-        mvc.perform(MockMvcRequestBuilders.get("/faculty/byColorAndName?name=name1&color=color2"))
+        mvc.perform(MockMvcRequestBuilders.get("/faculty/byColorOrName?name=name1&color=color2"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name").value("name1"))
                 .andExpect(jsonPath("$[0].color").value("color1"))

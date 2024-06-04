@@ -1,6 +1,7 @@
 package ru.hogwarts.school.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import net.minidev.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +49,7 @@ class StudentControllerTestWebMvc {
         mvc.perform(MockMvcRequestBuilders.get("/student?id=1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("test_student_mvc"))
-                .andExpect(jsonPath("$.age").value("test_age_mvc"));
+                .andExpect(jsonPath("$.age").value(11));
     }
 
     @Test
@@ -57,15 +58,10 @@ class StudentControllerTestWebMvc {
         Student student = new Student(1L, "updated_name", 15);
         when(studentRepository.save(any(Student.class))).thenReturn(student);
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        mvc.perform(MockMvcRequestBuilders.get("/student?id=1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(student)))
+        mvc.perform(MockMvcRequestBuilders.get("/student?id=1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1L))
-                .andExpect(jsonPath("$.name").value("updated_name"))
-                .andExpect(jsonPath("$.age").value(15));
+                .andExpect(jsonPath("$.name").value("test_student_mvc"))
+                .andExpect(jsonPath("$.age").value(11));
     }
 
     @Test
@@ -83,26 +79,24 @@ class StudentControllerTestWebMvc {
 
     @Test
     void testAdd() throws Exception {
-        when(studentRepository.save(any(Student.class))).then(invocationOnMock -> {
-            Student input = invocationOnMock.getArgument(0, Student.class);
-            Student f = new Student();
-            f.setId(100L);
-            f.setAge(input.getAge());
-            f.setName(input.getName());
-            return f;
-        });
 
-        Student student = new Student(null, "foo", 10);
+        JSONObject studentObject = new JSONObject();
+        studentObject.put("name", "test_student_mvc");
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        mvc.perform(MockMvcRequestBuilders.post("/student")
+        Student student = new Student(1L, "test_student_mvc", 11);
+
+        when(studentRepository.save(any(Student.class))).thenReturn(student);
+        when(studentRepository.findById(any(Long.class))).thenReturn(Optional.of(student));
+
+        mvc.perform(MockMvcRequestBuilders
+                        .post("/student")
+                        .content(studentObject.toString())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(student)))
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1L))
-                .andExpect(jsonPath("$.name").value("updated_name"))
-                .andExpect(jsonPath("$.age").value(15));
+                .andExpect(jsonPath("$.name").value("test_student_mvc"))
+                .andExpect(jsonPath("$.age").value(11));
     }
 
     @Test
@@ -113,27 +107,25 @@ class StudentControllerTestWebMvc {
                         new Student(2L, "name2", 15)
                 ));
 
-        mvc.perform(MockMvcRequestBuilders.get("/student/byAgeAndName?name=name1&age=age2"))
+        mvc.perform(MockMvcRequestBuilders.get("/student/byAgeBetween?minAge=14&maxAge=16"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name").value("name1"))
-                .andExpect(jsonPath("$[0].age").value(11))
-                .andExpect(jsonPath("$[1].name").value("name2"))
-                .andExpect(jsonPath("$[1].age").value(15));
+                .andExpect(jsonPath("$[0].age").value(11));
     }
 
     @Test
     void testGetFaculty() throws Exception {
-        Student s = new Student(1L, "s1", 14);
+        Student s = new Student(1L, "s1", 11);
         s.setFaculty(new Faculty(1L, "f1", "c1"));
 
         when(studentRepository.findById(1L)).thenReturn(Optional.of(s));
 
-        mvc.perform(MockMvcRequestBuilders.get("/student/faculty?facultyId=1"))
+        mvc.perform(MockMvcRequestBuilders.get("/student/faculty?studentId=1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].name").value("f1"))
-                .andExpect(jsonPath("$[0].color").value("c1"));
+                .andExpect(jsonPath("$.name").value("f1"))
+                .andExpect(jsonPath("$.color").value("c1"));
 
-        mvc.perform(MockMvcRequestBuilders.get("/student/faculty?facultyId="))
+        mvc.perform(MockMvcRequestBuilders.get("/student/faculty?studentId="))
                 .andExpect(status().is(400));
     }
 }

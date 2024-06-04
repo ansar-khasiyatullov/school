@@ -1,6 +1,5 @@
 package ru.hogwarts.school.controller;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.model.Faculty;
@@ -19,41 +18,32 @@ public class StudentController {
     }
 
     @PostMapping
-    public Student addStudent(@RequestBody Student student) {
-        return studentService.createStudent(student);
+    public Student add(@RequestBody Student student) {
+        return studentService.add(student);
     }
 
     @GetMapping
-    public ResponseEntity<Student> getStudentInfo(@PathVariable Long id) {
-        Student student = studentService.findStudent(id);
-        if(student==null){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
-        return ResponseEntity.ok(student);
+    public Student get(@RequestParam long id) {
+        return studentService.get(id);
     }
 
     @PutMapping
-    public ResponseEntity<Student> editStudent(@RequestBody Student student) {
-        Student foundStudent = studentService.editStudent(student);
-        if (foundStudent == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
-        return ResponseEntity.ok(foundStudent);
+    public Student update(@RequestBody Student student) {
+        return studentService.update(student);
     }
 
-    @DeleteMapping("{id}")
-    public ResponseEntity deleteStudent(@PathVariable Long id) {
-        studentService.deleteStudent(id);
-        return ResponseEntity.ok().build();
-    }
-
-    @GetMapping("/byAge/{age}")
-    public Collection<Student> findByAge(@PathVariable int age) {
-        return studentService.getByAgeStudents(age);
+    @DeleteMapping
+    public boolean delete(@RequestParam long id) {
+        return studentService.delete(id);
     }
 
     @GetMapping("/byAge")
-    public Collection<Student> findByAgeBetween(@RequestParam(required = false) Integer minAge,
+    public Collection<Student> getByAge(@RequestParam(required = false) Integer age) {
+        return studentService.getByAge(age);
+    }
+
+    @GetMapping("/byAgeBetween")
+    public Collection<Student> getByAgeBetween(@RequestParam(required = false) Integer minAge,
                                                 @RequestParam(required = false) Integer maxAge) {
         if (minAge != null && maxAge != null) {
             return studentService.getByAgeBetween(minAge, maxAge);
@@ -61,9 +51,9 @@ public class StudentController {
         return studentService.getAllStudents();
     }
 
-    @GetMapping("student/faculty")
+    @GetMapping("/faculty")
     public Faculty getStudentFaculty(@RequestParam long studentId) {
-        return studentService.findStudent(studentId).getFaculty();
+        return studentService.get(studentId).getFaculty();
     }
 
     @GetMapping("/count")
